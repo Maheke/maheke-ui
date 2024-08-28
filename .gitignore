@@ -1,2 +1,11 @@
+# macOS
+.DS_Store
+
+# Node
 node_modules
+*.log*
+.vite
+.cache
+.output
 .env
+dist
