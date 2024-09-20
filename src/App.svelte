@@ -3,7 +3,7 @@
   import Footer from "@/lib/components/footer/Footer.svelte";
   import Header from "@/lib/components/header/Header.svelte";
   import { isLanguageLoading } from "@/lib/store/store";
-  import Home from "@/routes/home/Home.svelte";
+  import Community from "@/routes/community/Community.svelte";
   import { Route, Router } from "svelte-navigator";
 
   window.addEventListener("message", handleSimpleSignerMessage);
@@ -13,7 +13,7 @@
   <main>
     {#if !$isLanguageLoading}
       <Header />
-      <Route path="/" component={Home} />
+      <Route path="/" component={Community} />
       <Footer />
     {/if}
   </main>
