@@ -25,6 +25,24 @@ export function openConnectWindow(wallets?: string[]) {
   return connectWindow;
 }
 
+export async function openSignWindow(xdr: string) {
+  const signWindow = window.open(
+    `${simpleSignerHost}/sign`,
+    "Sign_Window",
+    "width=450, height=350"
+  );
+
+  window.addEventListener("message", (e) => {
+    if (e.origin !== simpleSignerHost) {
+      return;
+    } else if (signWindow && e.data.type === "onReady") {
+      signWindow.postMessage({ xdr }, simpleSignerHost);
+    }
+  });
+
+  return signWindow;
+}
+
 export function handleSimpleSignerMessage(e: MessageEvent) {
   if (
     e.origin !== window.origin &&
