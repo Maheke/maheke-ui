@@ -4,6 +4,7 @@
   import Header from "@/lib/components/header/Header.svelte";
   import { isLanguageLoading } from "@/lib/store/store";
   import Community from "@/routes/community/Community.svelte";
+  import VoteProposal from "@/routes/voteProposal/VoteProposal.svelte";
   import { Route, Router } from "svelte-navigator";
 
   window.addEventListener("message", handleSimpleSignerMessage);
@@ -14,6 +15,7 @@
     {#if !$isLanguageLoading}
       <Header />
       <Route path="/" component={Community} />
+      <Route path="/proposal/:id" component={VoteProposal} />
       <Footer />
     {/if}
   </main>
