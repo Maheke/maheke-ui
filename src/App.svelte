@@ -4,6 +4,7 @@
   import Header from "@/lib/components/header/Header.svelte";
   import { isLanguageLoading } from "@/lib/store/store";
   import Community from "@/routes/community/Community.svelte";
+  import Proposal from "@/routes/newProposal/Proposal.svelte";
   import VoteProposal from "@/routes/voteProposal/VoteProposal.svelte";
   import { Route, Router } from "svelte-navigator";
 
@@ -16,6 +17,7 @@
       <Header />
       <Route path="/" component={Community} />
       <Route path="/proposal/:id" component={VoteProposal} />
+      <Route path="/new-proposal" component={Proposal} />
       <Footer />
     {/if}
   </main>
