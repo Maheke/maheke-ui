@@ -1,4 +1,4 @@
-import { publicKey } from "@/lib/store/store";
+import { publicKey, xdr } from "@/lib/store/store";
 import { StrKey } from "stellar-sdk";
 
 const simpleSignerHost = import.meta.env.VITE_HOST_SIMPLE_SIGNER;
@@ -51,10 +51,18 @@ export function handleSimpleSignerMessage(e: MessageEvent) {
     return;
   }
   const messageEvent = e.data;
+
   if (messageEvent.type === "onConnect") {
     const publicKeyEvent = messageEvent.message.publicKey;
     if (StrKey.isValidEd25519PublicKey(publicKeyEvent)) {
       publicKey.set(publicKeyEvent);
+    }
+  }
+
+  if (messageEvent.type === "onSign") {
+    const signedXdr = messageEvent.message.signedXDR;
+    if (signedXdr) {
+      xdr.set(signedXdr);
     }
   }
 }

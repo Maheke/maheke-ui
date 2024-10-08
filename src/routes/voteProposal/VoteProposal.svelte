@@ -7,6 +7,7 @@
   import ProposalInformation from "@/lib/components/proposals/voteProposal/ProposalInformation.svelte";
   import ProposalLoading from "@/lib/components/proposals/voteProposal/ProposalLoading.svelte";
   import VoteModal from "@/lib/components/proposals/voteProposal/VoteModal.svelte";
+  import { getProposal } from "@/lib/services/governance";
   import { error, is404, language, loading } from "@/lib/store/store";
   import { getProposalStatus } from "@/routes/community/proposalsHelper";
   import { onMount } from "svelte";
@@ -16,31 +17,11 @@
 
   let proposalInfo: IProposalsList;
 
-  const proposal = {
-    name: "Stellar Startup Camp - Summer Edition July 2024",
-    description: "My proposal description for the SCF Camp",
-    creator: "GDYNGOL2H757AUFYGX3ZTUPCMEKRHJFIXTXWQ7HCX7QHUUTMPEQJP7YF",
-    deadline: "2024-07-25T03:00:00+00:00",
-    created: "2024-07-25T11:03:41.6709264+00:00",
-    whitelistedAssets: [
-      { asset: { isNative: true, code: "XLM", issuer: "" }, multiplier: 1 },
-      {
-        asset: {
-          isNative: false,
-          code: "PNT",
-          issuer: "GCDNASAGVK2QYBB5P2KS75VG5YP7MOVAOUPCHAFLESX6WAI2Z46TNZPY",
-        },
-        multiplier: 2,
-      },
-    ],
-    options: [{ name: "FOR" }, { name: "AGAINST" }],
-    votingResult: null,
-  };
-
   onMount(async () => {
     if ($params["id"]) {
       try {
         $loading = true;
+        const proposal = await getProposal($params["id"]);
         proposalInfo = getProposalStatus($params["id"], proposal);
         $loading = false;
       } catch (e) {
@@ -73,16 +54,16 @@
     {:else if $error}
       <p class="maheke-governance error-paragraph">{$error}</p>
     {:else if proposalInfo}
-      <ProposalDetails {proposal} />
-      <ProposalInformation {proposal} />
+      <ProposalDetails proposal={proposalInfo} />
+      <ProposalInformation proposal={proposalInfo} />
     {/if}
   </div>
   {#if proposalInfo}
-    <ProposalVotes {proposal} />
+    <ProposalVotes proposal={proposalInfo} />
   {/if}
 </div>
 {#if $isModalVisible}
-  <VoteModal {proposal} />
+  <VoteModal proposal={proposalInfo} />
 {/if}
 
 <style>

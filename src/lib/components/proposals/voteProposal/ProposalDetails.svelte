@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { IProposalsList } from "../IProposalsList";
   import { openConnectWindow } from "@/helpers/simpleSignerHelper";
   import { language } from "@/lib/components/language/languageStore";
   import Status from "@/lib/components/status/Status.svelte";
   import { publicKey, xdr } from "@/lib/store/store";
   import { isModalVisible, voteStore } from "@/routes/voteProposal/voteStore";
 
-  export let proposal;
+  export let proposal: IProposalsList;
 
   function toggleModal() {
     if ($voteStore.registeredVote) {
@@ -22,22 +23,24 @@
 
 <div class="maheke-governance-proposal-container">
   <div class="maheke-governance-index-proposal">
-    {proposal.name}
+    {proposal.data.name}
     {$language.BY}
     <a href="/"
-      >{proposal.creator
+      >{proposal.data.creator
         .slice(0, 3)
         .concat("...")
-        .concat(proposal.creator.substr(-3))}</a
+        .concat(proposal.data.creator.substr(-3))}</a
     >
   </div>
   <div class="maheke-governance-proposal-details-container">
-    <h3 class="maheke-governance-proposal-title">{proposal.name}</h3>
-    <div class="maheke-governance-proposal-details">{proposal.description}</div>
+    <h3 class="maheke-governance-proposal-title">{proposal.data.name}</h3>
+    <div class="maheke-governance-proposal-details">
+      {proposal.data.description}
+    </div>
   </div>
   <div class="maheke-governance-proposal-vote-container">
     <div class="maheke-governance select-vote-container">
-      {#if proposal.votingResult}
+      {#if proposal.data.votingResult}
         <p class="maheke-governance-proposal-vote-label">
           {$language.FINAL_RESULT}
         </p>
@@ -46,7 +49,7 @@
         <p class="maheke-governance-proposal-vote-label">
           {$language.CAST_VOTE}
         </p>
-        {#each proposal.options as option}
+        {#each proposal.data.options as option}
           <button
             class={`maheke-governance-vote-btn vote-${option.name}-btn`.toLowerCase()}
             on:click={() => {
@@ -69,7 +72,7 @@
       {/if}
     </div>
 
-    {#if !$publicKey && !proposal.votingResult}
+    {#if !$publicKey && !proposal.data.votingResult}
       <button
         class="maheke-governance-send-vote-modal-btn"
         on:click={() => {
@@ -78,7 +81,7 @@
       >
         {$language.CONNECT}
       </button>
-    {:else if !proposal.votingResult && !$voteStore.confirmedVote}
+    {:else if !proposal.data.votingResult && !$voteStore.confirmedVote}
       <button
         class="maheke-governance-send-vote-modal-btn {!$voteStore.registeredVote &&
           'vote-btn-disabled'}"

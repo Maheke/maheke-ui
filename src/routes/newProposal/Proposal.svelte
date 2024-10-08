@@ -12,6 +12,7 @@
     openSignWindow,
   } from "@/helpers/simpleSignerHelper";
   import ProposalCreationSuccessModal from "@/lib/components/proposals/newProposal/proposalCreationSuccessModal.svelte";
+  import { saveProposal } from "@/lib/services/governance";
   import { createFeePaymentClaimableBalance } from "@/lib/stellar/stellarHelper";
   import { language, publicKey, xdr } from "@/lib/store/store";
   import { Server, TransactionBuilder } from "stellar-sdk";
@@ -60,9 +61,7 @@
           import.meta.env.VITE_STELLAR_NETWORK_PASSPHRASE
         )
       );
-      const result = {
-        ok: true,
-      };
+      const result = await saveProposal($proposal);
       $sendingProposal = false;
       if (result.ok) {
         $sendingSuccess = true;

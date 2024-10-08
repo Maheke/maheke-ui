@@ -1,27 +1,9 @@
 <script lang="ts">
+  import { IProposalsList } from "../IProposalsList";
   import { language } from "@/lib/components/language/languageStore";
   import Status from "@/lib/components/status/Status.svelte";
 
-  const proposal1 = {
-    name: "Proposal1NameTest",
-    description: "A testing proposal",
-    creator: "GDYNGOL2H757AUFYGX3ZTUPCMEKRHJFIXTXWQ7HCX7QHUUTMPEQJP7YF",
-    deadline: "2024-07-25T03:00:00+00:00",
-    created: "2024-07-25T11:03:41.6709264+00:00",
-    whitelistedAssets: [
-      { asset: { isNative: true, code: "XLM", issuer: "" }, multiplier: 1 },
-      {
-        asset: {
-          isNative: false,
-          code: "USDC",
-          issuer: "GCDNASAGVK2QYBB5P2KS75VG5YP7MOVAOUPCHAFLESX6WAI2Z46TNZPY",
-        },
-        multiplier: 2,
-      },
-    ],
-    options: [{ name: "FOR" }, { name: "AGAINST" }],
-    votingResult: null,
-  };
+  export let proposal: IProposalsList;
 
   function getDate(date: string) {
     const newDate = new Date(date);
@@ -41,7 +23,7 @@
       {$language.PROPOSAL_START_DATE}
     </p>
     <p class="maheke-governance-proposal-start-date">
-      {getDate(proposal1.created)}
+      {getDate(proposal.data.created)}
     </p>
   </div>
   <div class="maheke-governance-proposal-end-date-container">
@@ -49,7 +31,7 @@
       {$language.PROPOSAL_END_DATE}
     </p>
     <p class="maheke-governance-proposal-end-date">
-      {getDate(proposal1.deadline)}
+      {getDate(proposal.data.deadline)}
     </p>
   </div>
   <div class="maheke-governance-proposal-accepted-assets-container">
@@ -57,7 +39,7 @@
       {$language.PROPOSAL_ACCEPTED_ASSETS}
     </div>
     <ul class="maheke-governance-accepted-assets-list">
-      {#each proposal1.whitelistedAssets as whitelistedAsset}
+      {#each proposal.data.whitelistedAssets as whitelistedAsset}
         <li class="maheke-governance-accepted-asset-item">
           <div class="asset-bullet-point" />
           <div>
