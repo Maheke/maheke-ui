@@ -71,8 +71,6 @@
       }
     }
   }
-
-  $: console.log({ creator: $proposal.creator, xdr: $xdr });
 </script>
 
 <div class="maheke-governance-create-proposal-container">

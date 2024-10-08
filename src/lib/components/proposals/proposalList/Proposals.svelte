@@ -34,8 +34,6 @@
 
       for (const proposal of proposalList.items) {
         const proposalResult = await getProposal(proposal.id);
-        console.log(proposalResult);
-
         $proposalsList.push(getProposalStatus(proposal.id, proposalResult));
       }
 
@@ -46,8 +44,6 @@
       $error = `${e}`;
     }
   }
-
-  $: console.log($loading);
 
   onMount(async () => {
     await renderProposals();
