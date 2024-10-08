@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { IProposalsList } from "../IProposalsList";
   import alertIcon from "@/assets/svg/alert-icon.svg";
   import infoIcon from "@/assets/svg/info-icon.svg";
   import XLMLogo from "@/assets/svg/stellar-xlm-black-logo.svg";
@@ -6,6 +7,7 @@
   import { language } from "@/lib/components/language/languageStore";
   import type { IProposalVote } from "@/lib/components/proposals/IProposalVote";
   import SaveUser from "@/lib/helpers/SaveUser";
+  import { voteProposal } from "@/lib/services/governance";
   import LocalStorage from "@/lib/storage/LocalStorage";
   import { publicKey, xdr } from "@/lib/store/store";
   import {
@@ -31,7 +33,7 @@
   let invalidInputMessage: string;
   let sendingVote = false;
   let operationHash: string;
-  export let proposal: any;
+  export let proposal: IProposalsList;
 
   async function loadAvailableAssets(publicKey: string) {
     const accountBalance = (await server.loadAccount(publicKey)).balances[0]
@@ -68,7 +70,10 @@
           issuer: "",
         },
       };
-      const unsignedXdr = "";
+
+      sendingVote = true;
+      const unsignedXdr = await voteProposal(proposal.id, voteInfo);
+      sendingVote = false;
       if (stellarXdr.TransactionEnvelope.validateXDR(unsignedXdr, "base64")) {
         openSignWindow(unsignedXdr);
       } else {

@@ -3,96 +3,11 @@
   import LoadingProposal from "./LoadingProposal.svelte";
   import ProposalSort from "./ProposalSort.svelte";
   import ProposalsList from "./ProposalsList.svelte";
+  import { getProposal, getProposalList } from "@/lib/services/governance";
   import { error, is404, language, loading } from "@/lib/store/store";
+  import { proposalsList } from "@/routes/community/proposalListStore";
   import { getProposalStatus } from "@/routes/community/proposalsHelper";
   import { onMount } from "svelte";
-
-  type ItemsObject = {
-    items: {
-      id: string;
-    }[];
-    [Symbol.iterator](): IterableIterator<{ id: string }>;
-  };
-
-  const jsonData: ItemsObject = {
-    items: [
-      { id: "qdpRsAqM" },
-      { id: "BkxnTuFT" },
-      { id: "UYPHPbe" },
-      { id: "UrBvDGjB" },
-      { id: "mMhyfqB" },
-    ],
-    [Symbol.iterator]: function* () {
-      yield* this.items;
-    },
-  };
-
-  let proposalList1 = [
-    {
-      name: "Test Proposal2",
-      description: "Test description2",
-      creator: "GCVEEP4PZK64YHGHJLKOGPGW5DSSZKZ4BNEFNLFPSNIRKMRNYGP3UMV6",
-      deadline: "2022-08-20T00:00:00Z",
-      created: "2022-07-20T14:15:53Z",
-      options: [
-        {
-          name: "FOR",
-        },
-        {
-          name: "AGAINST",
-        },
-      ],
-      votingResult: null,
-    },
-    {
-      name: "Test Proposal3",
-      description: "Test description3",
-      creator: "GCOHVVWFIJM7HCOPGALFUPX3QJ3EXQNXXVZMJ2ONCU7YS7HDZM62OJQZ",
-      deadline: "2022-07-20T00:00:00Z",
-      created: "2022-06-20T14:33:07Z",
-      options: [
-        {
-          name: "FOR",
-        },
-        {
-          name: "AGAINST",
-        },
-      ],
-      votingResult: "FOR",
-    },
-    {
-      name: "Test Proposal4",
-      description: "Test description4",
-      creator: "GA2S5KMVVWW232MB3MF4GCCN2Z5GPWPEGKGLNFSXRFVSUHETQXIDXFVN",
-      deadline: "2022-08-20T00:00:00Z",
-      created: "2022-07-20T14:45:54Z",
-      options: [
-        {
-          name: "FOR",
-        },
-        {
-          name: "AGAINST",
-        },
-      ],
-      votingResult: null,
-    },
-    {
-      name: "Proposal5",
-      description: "Description5",
-      creator: "GAI7S4LUVY4A3RXR2472L4PMJESSJTPDPTCIR5A7CVTST3RPNMSAVK4L",
-      deadline: "2022-08-20T00:00:00Z",
-      created: "2022-07-20T18:34:09Z",
-      options: [
-        {
-          name: "FOR",
-        },
-        {
-          name: "AGAINST",
-        },
-      ],
-      votingResult: null,
-    },
-  ];
 
   let page = 1;
   let proposalList: IProposalList;
@@ -100,48 +15,28 @@
   async function handleNextPage() {
     window.scrollTo(0, 0);
     page++;
-    proposalList1 = [];
+    $proposalsList = [];
     await renderProposals();
   }
 
   async function handlePreviousPage() {
     window.scrollTo(0, 0);
     page--;
-    proposalList1 = [];
+    $proposalsList = [];
     await renderProposals();
   }
 
   async function renderProposals() {
     try {
+      const proposalsPerPage = 5;
       $loading = true;
+      proposalList = await getProposalList(proposalsPerPage, page);
 
-      for (const proposal of jsonData) {
-        const proposalResult = {
-          name: "Proposal1NameTest",
-          description: "A testing proposal",
-          creator: "GDYNGOL2H757AUFYGX3ZTUPCMEKRHJFIXTXWQ7HCX7QHUUTMPEQJP7YF",
-          deadline: "2022-05-28T03:00:00+00:00",
-          created: "2022-04-28T11:03:41.6709264+00:00",
-          whitelistedAssets: [
-            {
-              asset: { isNative: true, code: "XLM", issuer: "" },
-              multiplier: 1,
-            },
-            {
-              asset: {
-                isNative: false,
-                code: "USDC",
-                issuer:
-                  "GCDNASAGVK2QYBB5P2KS75VG5YP7MOVAOUPCHAFLESX6WAI2Z46TNZPY",
-              },
-              multiplier: 2,
-            },
-          ],
-          options: [{ name: "FOR" }, { name: "AGAINST" }],
-          votingResult: null,
-        };
+      for (const proposal of proposalList.items) {
+        const proposalResult = await getProposal(proposal.id);
+        console.log(proposalResult);
 
-        proposalList1.push(getProposalStatus(proposal.id, proposalResult));
+        $proposalsList.push(getProposalStatus(proposal.id, proposalResult));
       }
 
       $loading = false;
@@ -151,6 +46,8 @@
       $error = `${e}`;
     }
   }
+
+  $: console.log($loading);
 
   onMount(async () => {
     await renderProposals();
@@ -182,8 +79,8 @@
     </p>
   {:else if $error}
     <p class="maheke-governance error-paragraph">{$error}</p>
-  {:else}
-    <ProposalsList proposalsList={proposalList1} />
+  {:else if proposalList}
+    <ProposalsList proposalsList={$proposalsList} />
     <div class="maheke-governance btn-container">
       <button
         on:click={() => handlePreviousPage()}

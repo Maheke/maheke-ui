@@ -1,8 +1,9 @@
 <script lang="ts">
   import { language } from "@/lib/components/language/languageStore";
+  import { IProposalsList } from "@/lib/components/proposals/IProposalsList";
   import Status from "@/lib/components/status/Status.svelte";
 
-  export let proposalsList;
+  export let proposalsList: IProposalsList[];
 </script>
 
 {#each proposalsList as proposal}
@@ -10,9 +11,9 @@
     <div class="maheke-governance proposal-info-container">
       <div class="maheke-governance proposal-info-items">
         <article class="maheke-governance proposal-article">
-          <h1 class="maheke-governance proposal-title">{proposal.name}</h1>
+          <h1 class="maheke-governance proposal-title">{proposal.data.name}</h1>
           <p class="maheke-governance proposal-info-paragraph">
-            {proposal.description}
+            {proposal.data.description}
           </p>
         </article>
         <div
@@ -26,7 +27,7 @@
       </div>
     </div>
     <a
-      href="/proposal/qdpRsAqM"
+      href="/proposal/{proposal.id}"
       class="maheke-governance see-vote-proposal-anchor gov-button"
     >
       {$language.SEE_VOTE}
@@ -99,7 +100,9 @@
     color: #ffffff;
     font-size: 16px;
     font-weight: 300;
+    max-width: 600px;
     text-transform: none;
+    overflow: hidden;
   }
 
   .maheke-governance.proposal-info-container {
